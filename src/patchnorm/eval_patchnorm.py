@@ -13,7 +13,7 @@ if __name__ == '__main__':
     if args.dataset == 'imagenet':
         img_size = 256
         channels = 3
-        near_ood = ['ninco']
+        near_ood = ['ssb_hard','ninco']
         far_ood = ['inaturalist', 'dtd', 'openimageo']
         in_loader = pick_dataset(name = args.dataset, train=False, batch_size=args.batch_size, img_size=img_size, num_workers=args.num_workers, patches=args.patches)
         if os.path.exists(os.path.join(data_raw_dir, 'ImageNet-C')):
