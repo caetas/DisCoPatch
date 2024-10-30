@@ -1,15 +1,12 @@
-from torchvision import datasets, transforms
+from torchvision import transforms
 from torch.utils.data import DataLoader
 from torch.utils.data import Dataset
 from config import data_raw_dir, data_dir
-from medmnist import ChestMNIST, TissueMNIST, OCTMNIST, PneumoniaMNIST
 import os
 from glob import glob
 from PIL import Image
 import numpy as np
 import torch
-import tarfile
-import io
 from tqdm import tqdm
 from datasets import load_dataset
 
@@ -20,7 +17,7 @@ class ImageNetPatchDataset(Dataset):
         self.transform_fn = transform_fn
         self.train = train
         self.dataset.set_transform(self.transform_fn)
-        self.dataset = self.dataset['train' if train else 'test']
+        self.dataset = self.dataset['train' if train else 'validation']
         self.patches = patches
 
     def __len__(self):
@@ -37,7 +34,7 @@ class ImageNetPatchDataset(Dataset):
         patches = torch.stack(patches)
         return patches, self.dataset[idx]['label']
 
-def imagenetpatch_train_loader(batch_size, normalize = False, input_shape = None, num_workers = 0, n_patches = 16):
+def imagenetpatch_train_loader(batch_size, normalize = False, input_shape = None, num_workers = 0, patches = 16):
 
         if normalize:
             transform = transforms.Compose([
@@ -59,7 +56,7 @@ def imagenetpatch_train_loader(batch_size, normalize = False, input_shape = None
             examples['pixel_values'] = [transform(image) for image in examples['image']]
             return examples
 
-        dataset = ImageNetPatchDataset(transform_fn, train = True, patches=n_patches)
+        dataset = ImageNetPatchDataset(transform_fn, train = True, patches=patches)
 
         training_loader = DataLoader(dataset,
                                     batch_size=batch_size,
@@ -67,13 +64,10 @@ def imagenetpatch_train_loader(batch_size, normalize = False, input_shape = None
                                     pin_memory=True,
                                     num_workers = num_workers)
         
-        if input_shape is not None:
-            return training_loader, input_shape, 3
-        else:
-            return training_loader, 64, 3
+        return training_loader
         
         
-def imagenetpatch_val_loader(batch_size, normalize = False, input_shape = None, n_patches = 16, num_workers = 0):
+def imagenetpatch_val_loader(batch_size, normalize = False, input_shape = None, patches = 16, num_workers = 0):
 
         if normalize:
             transform = transforms.Compose([
@@ -95,7 +89,7 @@ def imagenetpatch_val_loader(batch_size, normalize = False, input_shape = None, 
             examples['pixel_values'] = [transform(image) for image in examples['image']]
             return examples
         
-        dataset = ImageNetPatchDataset(transform_fn, train = False, patches=n_patches)
+        dataset = ImageNetPatchDataset(transform_fn, train = False, patches=patches)
 
         validation_loader = DataLoader(dataset,
                                     batch_size=batch_size,
@@ -103,10 +97,7 @@ def imagenetpatch_val_loader(batch_size, normalize = False, input_shape = None, 
                                     pin_memory=True,
                                     num_workers = num_workers)
         
-        if input_shape is not None:
-            return validation_loader, input_shape, 3
-        else:
-            return validation_loader, 64, 3
+        return validation_loader
         
 class CustomDataset(Dataset):
     def __init__(self, root, split, transform=None, patches=16):

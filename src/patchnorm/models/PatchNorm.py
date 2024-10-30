@@ -382,6 +382,8 @@ class PatchNorm(nn.Module):
 
             for (imgs, _) in tqdm(data_loader, desc = 'Batches', leave=False):
 
+                imgs = imgs.view(-1, imgs.size(2), imgs.size(3), imgs.size(4))
+                
                 # Adversarial ground truths
                 valid = torch.ones(imgs.size(0), 1).to(self.device)
                 fake = torch.zeros(imgs.size(0), 1).to(self.device)
@@ -440,7 +442,7 @@ class PatchNorm(nn.Module):
                 optimizer_D.step()
                 patch_cnt += imgs.size(0)
 
-                if self.dataset == 'imagenetpatch' and patch_cnt>len(data_loader)*0.2*self.patches:
+                if self.dataset == 'imagenet' and patch_cnt>len(data_loader)*0.2*self.patches:
                     break
 
             epochs_bar.set_description(f"Loss: {acc_g_loss/patch_cnt:.4f} - D Loss: {acc_d_loss/patch_cnt:.4f}")
