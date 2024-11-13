@@ -15,7 +15,6 @@ def parse_args():
     argparser.add_argument('--gen_weight', type=float, default=0.002, help='generator weight')
     argparser.add_argument('--recon_weight', type=float, default=0.002, help='reconstruction weight')
     argparser.add_argument('--sample_and_save_frequency', type=int, default=5, help='sample and save frequency')
-    argparser.add_argument('--outlier_detection', action='store_true', default=False, help='outlier detection')
     argparser.add_argument('--discriminator_checkpoint', type=str, default=None, help='discriminator checkpoint path')
     argparser.add_argument('--ood_task', type=str, default='near', help='ood task', choices=['near', 'far', 'covar'])
     argparser.add_argument('--num_workers', type=int, default=0, help='number of workers')
