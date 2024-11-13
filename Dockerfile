@@ -2,8 +2,8 @@ FROM python:3.11-slim
 
 WORKDIR /app/
 
-COPY requirements/requirements.txt requirements/requirements-prod.txt /app/requirements/
-RUN pip install -r /app/requirements/requirements.txt && pip install -r /app/requirements/requirements-prod.txt
+COPY requirements/requirements.txt /app/requirements/
+RUN pip install -r /app/requirements/requirements.txt
 
 # copy code and models
 #ADD models /app/models

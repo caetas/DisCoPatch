@@ -507,20 +507,19 @@ class PatchNorm(nn.Module):
         '''
         in_scores = []
         out_scores = []
+
         if in_array is not None:
             in_scores = in_array
         else:
-            cnt = 0
             for (imgs, _) in tqdm(in_loader, desc = 'In-distribution', leave=False):
-                in_scores.append(self.discriminator(imgs.squeeze().to(self.device)).detach().cpu().numpy().mean())
-                cnt += 1
+                score = self.discriminator(imgs.squeeze().to(self.device))
+                in_scores.append(score.detach().cpu().numpy().mean())
 
             in_scores = np.array(in_scores)
             in_scores = -in_scores + 1
-        cnt = 0
+
         for (imgs, _) in tqdm(out_loader, desc = 'Out-of-distribution', leave=False):
             out_scores.append(self.discriminator(imgs.squeeze().to(self.device)).detach().cpu().numpy().mean())
-            cnt += 1
 
         out_scores = np.array(out_scores)
         out_scores = -out_scores + 1

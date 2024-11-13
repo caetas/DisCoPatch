@@ -6,4 +6,4 @@
 """
 from version import __version__
 
-__author__ = "Francisco Caetano"
+__author__ = "Anonymous"

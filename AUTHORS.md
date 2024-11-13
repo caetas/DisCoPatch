@@ -4,7 +4,7 @@ Credits
 Project Lead
 ----------------
 
-* Francisco Caetano <franciscocaetano99@gmail.com>
+* Anonymous
 
 Project Contributors
 ------------

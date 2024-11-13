@@ -4,7 +4,7 @@
 name = "PatchNorm"
 version = "0.0.0"
 description = "A short description of the project. No quotes."
-authors = ["TUe <none@none.pt>"]
+authors = ["<none@none.pt>"]
 readme = "README.md"
 license = "MIT"
 

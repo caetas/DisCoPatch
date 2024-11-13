@@ -137,8 +137,7 @@ class CustomDataset(Dataset):
         for i in range(self.patches):
             x = np.random.randint(0, 192)
             y = np.random.randint(0, 192)
-            patch = image[:, x:x+64, y:y+64]
-            patches.append(patch)
+            patches.append(image[:, x:x+64, y:y+64])
         return torch.stack(patches), 0
     
 def inaturalist_dataloader(batch_size, img_size, num_workers=0, patches=16):

@@ -4,7 +4,7 @@ default_context:
   project_name: "PatchNorm"
   repo_name: "PatchNorm"
   description: "A short description of the project. No quotes."
-  organization: "TUe"
+  organization: "None"
   license: "MIT"
   organization_email: "none@none.pt"
   line_length: "120"

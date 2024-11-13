@@ -112,7 +112,7 @@ target/
 # IPython
 profile_default/
 ipython_config.py
-
+*.ipynb
 # Jupyter Notebook Checkpoints
 notebook/.ipynb_checkpoints
 
