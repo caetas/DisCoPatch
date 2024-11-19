@@ -12,7 +12,7 @@ WORKDIR /app
 
 COPY .env /app/.env
 
-ENV PYTHONPATH="${PYTHONPATH}:/app/src/patchnorm"
+ENV PYTHONPATH="${PYTHONPATH}:/app/src/discopatch"
 
 # The code to run when container is started
-CMD python src/patchnorm/api.py
+CMD python src/discopatch/api.py

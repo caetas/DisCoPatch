@@ -19,7 +19,7 @@ docs_require = find_requirements("requirements-docs.txt")
 
 
 setup(
-    name="PatchNorm",
+    name="DisCoPatch",
     version="0.0.0",
     author="Francisco Caetano",
     description="A short description of the project. No quotes.",

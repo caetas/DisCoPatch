@@ -7,13 +7,13 @@
 [![Hydra](https://img.shields.io/badge/Config-Hydra-89b8cd)](https://hydra.cc)
 [![security: bandit](https://img.shields.io/badge/security-bandit-yellow.svg)](https://github.com/PyCQA/bandit)
 
-# PatchNorm
+# DisCoPatch
 
 <p align="center">
-  <img src="imgs/PatchNorm.png" width="1000%" alt="Overview of DisCoNet's architecture." caption="Overview of PatchNorm's architecture.">
+  <img src="imgs/DisCoPatch.png" width="1000%" alt="Overview of DisCoNet's architecture." caption="Overview of DisCoPatch's architecture.">
 </p>
 
-The official implementation of PatchNorm in PyTorch.
+The official implementation of DisCoPatch in PyTorch.
 
 ## Prerequisites
 
@@ -30,8 +30,8 @@ You will need:
 
 Clone this repository (requires git ssh keys)
 
-    git clone --recursive git@github.com:caetas/PatchNorm.git
-    cd patchnorm
+    git clone --recursive git@github.com:caetas/DisCoPatch.git
+    cd discopatch
 
 Install dependencies
 
@@ -83,24 +83,24 @@ ImageNet-1k is automatically downloaded from HuggingFace when you use the DataLo
 
 The remaining datasets can be downloaded using [`datasets_download.py`](src/disconet/datasets_download.py) by running the following commands:
 
-    cd src/patchnorm
+    cd src/discopatch
     python datasets_download.py [--imagenet]
 
 **Note: Use the `--imagenet` flag if you want to download ImageNet-C.**
 
 ##  Model
 
-- PatchNorm [`Code`](src/patchnorm/models/PatchNorm.py)|[`Train Script`](src/patchnorm/train_patchnorm.py)|[`Eval Script`](src/patchnorm/eval_patchnorm.py)|[`Documentation`](docs/PatchNorm.md)
+- DisCoPatch [`Code`](src/discopatch/models/DisCoPatch.py)|[`Train Script`](src/discopatch/train_discopatch.py)|[`Eval Script`](src/discopatch/eval_discopatch.py)|[`Documentation`](docs/DisCoPatch.md)
 
 ### Train and Evaluate Models
 
-The commands required to train and evaluate each of the models are provided in the documentation section: [`PatchNorm.md`](docs/PatchNorm.md)
+The commands required to train and evaluate each of the models are provided in the documentation section: [`DisCoPatch.md`](docs/DisCoPatch.md)
 
 ### Pre-trained Checkpoint
 
-You can download the pre-trained PatchNorm checkpoint using this [`link`](https://drive.google.com/file/d/1kVPpdR4Sg5-qpDyBVDW2qYLN8kHTPEGh/view?usp=sharing).
+You can download the pre-trained DisCoPatch checkpoint using this [`link`](https://drive.google.com/file/d/1kVPpdR4Sg5-qpDyBVDW2qYLN8kHTPEGh/view?usp=sharing).
 
-### Results for PatchNorm-64
+### Results for DisCoPatch-64
 
 |     OOD Shift      |                Dataset            |          AUROC          |         FPR@95         |
 | ------------------ | --------------------------------- | ----------------------- | ---------------------- |
@@ -149,6 +149,6 @@ All the repositories used to generate this code are mentioned in each of the cor
 
 ## Citation
 
-If you publish work that uses PatchNorm, please cite PatchNorm.
+If you publish work that uses DisCoPatch, please cite DisCoPatch.
 
 **BibTex information will be added later**
