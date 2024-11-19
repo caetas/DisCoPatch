@@ -1,8 +1,8 @@
 # This file contains values from Cookiecutter
 
 default_context:
-  project_name: "PatchNorm"
-  repo_name: "PatchNorm"
+  project_name: "DisCoPatch"
+  repo_name: "DisCoPatch"
   description: "A short description of the project. No quotes."
   organization: "None"
   license: "MIT"

@@ -127,7 +127,7 @@ data/raw
 test/data
 
 #wandb
-src/patchnorm/wandb
+src/discopatch/wandb
 
 # Mac OS-specific storage files
 .DS_Store

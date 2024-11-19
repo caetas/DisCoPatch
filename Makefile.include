@@ -4,7 +4,7 @@
 # https://gist.github.com/grihabor/4a750b9d82c9aa55d5276bd5503829be             #
 #################################################################################
 # Variables
-PACKAGE            := PatchNorm
+PACKAGE            := DisCoPatch
 SHELL              := /bin/bash
 ROOTDIR            := $(shell pwd)
 VERSIONFILE        := $(shell cat VERSION)
@@ -12,9 +12,9 @@ MAKE               := make --no-print-directory
 MAKE_VERSION       := $(shell $(MAKE) --version)
 UNAME               = $(shell uname -m)
 DEBUG_FILE         := debug.txt
-MODULE_NAME        := patchnorm
+MODULE_NAME        := discopatch
 PROJECT_DIR        := $(shell dirname $(realpath $(lastword $(MAKEFILE_LIST))))
-PROJECT_NAME       := PatchNorm
+PROJECT_NAME       := DisCoPatch
 PYTHON_INTERPRETER := python3
 ARCH               := $(shell $(PYTHON_INTERPRETER) -c "import platform; print(platform.platform())")
 OS_SYSTEM          := $(shell $(PYTHON_INTERPRETER) -c "import platform; print(platform.system())")
@@ -23,7 +23,7 @@ CONDA_HOME          = $(HOME)/miniconda3
 CONDA_BIN_DIR       = $(CONDA_HOME)/bin
 CONDA               = $(CONDA_BIN_DIR)/conda
 CONDA_EXE          := $(shell which conda)
-ENV_NAME            = patchnorm
+ENV_NAME            = discopatch
 ENV_DIR             = $(CONDA_HOME)/envs/$(ENV_NAME)
 ENV_BIN_DIR         = $(ENV_DIR)/bin
 ENV_LIB_DIR         = $(ENV_DIR)/lib
