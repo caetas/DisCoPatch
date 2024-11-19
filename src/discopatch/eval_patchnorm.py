@@ -1,5 +1,5 @@
 from data.Dataloaders import *
-from models.PatchNorm import PatchNorm
+from models.DisCoPatch import DisCoPatch
 from utils.util import parse_args
 import torch
 import os
@@ -20,7 +20,7 @@ if __name__ == '__main__':
             corruptions = os.listdir(os.path.join(data_raw_dir, 'ImageNet-C'))
 
     # Initialize model and load checkpoint
-    model = PatchNorm(input_channels=channels, input_shape=img_size//4, args=args)
+    model = DisCoPatch(input_channels=channels, input_shape=img_size//4, args=args)
 
     if args.discriminator_checkpoint is not None:
         model.discriminator.load_state_dict(torch.load(args.discriminator_checkpoint, weights_only=False), strict=False)

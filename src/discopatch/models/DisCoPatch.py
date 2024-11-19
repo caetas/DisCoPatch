@@ -17,8 +17,8 @@ from sklearn.metrics import roc_auc_score, roc_curve
 def create_checkpoint_dir():
   if not os.path.exists(models_dir):
     os.makedirs(models_dir)
-  if not os.path.exists(os.path.join(models_dir, 'PatchNorm')):
-    os.makedirs(os.path.join(models_dir, 'PatchNorm'))
+  if not os.path.exists(os.path.join(models_dir, 'DisCoPatch')):
+    os.makedirs(os.path.join(models_dir, 'DisCoPatch'))
 
 class VanillaVAE(nn.Module):
     def __init__(self, input_shape, input_channels, latent_dim, hidden_dims = None, lr = 5e-3, batch_size = 64, kld_weight = 1e-4, loss_type = 'mse'):
@@ -244,10 +244,10 @@ class Discriminator(nn.Module):
         loss = nn.BCEWithLogitsLoss()
         return loss(x, y)
     
-class PatchNorm(nn.Module):
+class DisCoPatch(nn.Module):
     def __init__(self, input_shape, input_channels, args):
         '''
-        PatchNorm model
+        DisCoPatch model
         Args:
         input_shape: Tuple with the input shape of the images
         device: Device to use for the model
@@ -264,7 +264,7 @@ class PatchNorm(nn.Module):
         loss_type: Type of loss to use for the VAE. It can be 'mse' or 'bce'
         kld_weight: Weight for the KLD loss
         '''
-        super(PatchNorm, self).__init__()
+        super(DisCoPatch, self).__init__()
         self.device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
         self.vae = VanillaVAE(input_shape, input_channels, args.latent_dim, args.hidden_dims.copy(), args.lr, args.batch_size, args.kld_weight, args.loss_type).to(self.device)
         self.discriminator = Discriminator(input_shape, input_channels, args.hidden_dims, args.lr, args.batch_size).to(self.device)
@@ -452,13 +452,13 @@ class PatchNorm(nn.Module):
             if (epoch+1) % self.sample_and_save_frequency == 0 or epoch == 0:
                 self.create_grid(title=f"Epoch {epoch}", train=True)
                 self.create_validation_grid(val_loader, title=f"Epoch {epoch}", train=True)
-                torch.save(self.discriminator.state_dict(), os.path.join(models_dir, 'PatchNorm', f"Discriminator_{self.dataset}_{epoch}.pt"))
+                torch.save(self.discriminator.state_dict(), os.path.join(models_dir, 'DisCoPatch', f"Discriminator_{self.dataset}_{epoch}.pt"))
         
             if acc_g_loss/patch_cnt < best_loss:
                 best_loss = acc_g_loss/patch_cnt
-                torch.save(self.vae.state_dict(), os.path.join(models_dir, 'PatchNorm', f"AdvVAE_{self.dataset}.pt"))
+                torch.save(self.vae.state_dict(), os.path.join(models_dir, 'DisCoPatch', f"AdvVAE_{self.dataset}.pt"))
 
-        torch.save(self.discriminator.state_dict(), os.path.join(models_dir, 'PatchNorm', f"Discriminator_{self.dataset}.pt"))
+        torch.save(self.discriminator.state_dict(), os.path.join(models_dir, 'DisCoPatch', f"Discriminator_{self.dataset}.pt"))
 
     def ood_score(self, recon_x, x, mu, logvar):
         '''
