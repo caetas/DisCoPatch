@@ -1,5 +1,5 @@
 from data.Dataloaders import pick_dataset
-from models.PatchNorm import PatchNorm
+from models.DisCoPatch import DisCoPatch
 from utils.util import parse_args
 import wandb
 
@@ -12,7 +12,7 @@ if __name__ == '__main__':
         channels = 3
 
     # Initialize wandb
-    wandb.init(project='PatchNorm',
+    wandb.init(project='DisCoPatch',
                 config={
                     'dataset': args.dataset,
                     'batch_size': args.batch_size,
@@ -27,11 +27,11 @@ if __name__ == '__main__':
                     'loss_type': args.loss_type,
                     'kld_weight': args.kld_weight,
                 },
-                name = 'PatchNorm_{}'.format(args.dataset))
+                name = 'DisCoPatch_{}'.format(args.dataset))
 
     # Load dataset, initialize model and train
     train_dataloader = pick_dataset(name = args.dataset, train=True, batch_size=args.batch_size, img_size=img_size, num_workers=args.num_workers, patches=args.patches)
-    model = PatchNorm(input_shape = img_size//4, input_channels = channels, args = args)
+    model = DisCoPatch(input_shape = img_size//4, input_channels = channels, args = args)
     model.train_model(train_dataloader, train_dataloader)
 
     # Finish wandb
