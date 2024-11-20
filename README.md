@@ -98,7 +98,7 @@ The commands required to train and evaluate each of the models are provided in t
 
 ### Pre-trained Checkpoint
 
-You can download the pre-trained DisCoPatch checkpoint using this [`link`](https://drive.google.com/file/d/1kVPpdR4Sg5-qpDyBVDW2qYLN8kHTPEGh/view?usp=sharing).
+You can download the pre-trained DisCoPatch checkpoint using this [`link`](https://drive.google.com/file/d/18d91_qxkP5K5lHhOpjrY2WLf4nQQlLtR/view?usp=sharing).
 
 ### Results for DisCoPatch-64
 
