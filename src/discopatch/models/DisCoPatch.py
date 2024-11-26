@@ -460,37 +460,6 @@ class DisCoPatch(nn.Module):
 
         torch.save(self.discriminator.state_dict(), os.path.join(models_dir, 'DisCoPatch', f"Discriminator_{self.dataset}.pt"))
 
-    def ood_score(self, recon_x, x, mu, logvar):
-        '''
-        Function to compute the OOD score
-        Args:
-        recon_x: Reconstructed images
-        x: Input images
-        mu: Mean of the latent space
-        logvar: Log variance of the latent space
-        Returns:
-        mse: Mean squared error
-        kld: Kullback-Leibler divergence
-        discriminator_score: Score of the discriminator
-        '''
-        if self.loss_type == 'mse':
-            loss_mse = nn.MSELoss(reduction='none')
-            loss_adv = nn.BCELoss(reduction='none')
-            mse = loss_mse(x, recon_x).mean(dim=(1,2,3))
-            kld = -0.5 * torch.sum(1 + logvar - mu**2 - logvar.exp(), dim = 1)
-            discriminator_score = loss_adv(self.discriminator(recon_x), torch.ones(x.size(0), 1).to(self.device)).squeeze()
-            return mse + kld*self.kld_weight + self.recon_weight*discriminator_score
-        else:
-            # iterate over the batch
-            ssim = torch.zeros(recon_x.size(0), device = self.device)
-            for i in range(recon_x.size(0)):
-                ssim[i] = self.mssim_loss(recon_x[i].unsqueeze(0)*0.5 + 0.5,x[i].unsqueeze(0)*0.5 + 0.5)
-            loss_adv = nn.BCELoss(reduction='none')
-            kld = -0.5 * torch.sum(1 + logvar - mu**2 - logvar.exp(), dim = 1)
-            discriminator_score = loss_adv(self.discriminator(recon_x), torch.ones(x.size(0), 1).to(self.device)).squeeze()
-            return ssim + kld*self.kld_weight + self.recon_weight*discriminator_score
-
-
     def outlier_detection(self, in_loader, out_loader, display = True, in_array = None):
         '''
         Function to test the outlier detection capabilities of the model
