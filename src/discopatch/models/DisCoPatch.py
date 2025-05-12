@@ -210,7 +210,8 @@ class Discriminator(nn.Module):
             modules.append(
                 nn.Sequential(
                     nn.Conv2d(input_channels, h_dim, kernel_size = 3, stride = 2, padding = 1),
-                    nn.BatchNorm2d(h_dim, track_running_stats=False),
+                    #nn.BatchNorm2d(h_dim, track_running_stats=False),
+                    nn.GroupNorm(32, h_dim),
                     nn.LeakyReLU()
                 )
             )
@@ -495,7 +496,7 @@ class DisCoPatch(nn.Module):
                         # set the gamma and beta parameters of the patch norm layer to the same values as the batch norm layer
                         self.discriminator.encoder[i][j].gamma = gamma
                         self.discriminator.encoder[i][j].beta = beta
-                        
+
         if in_array is not None:
             in_scores = in_array
         else:
