@@ -8,12 +8,12 @@ from config import data_raw_dir
 if __name__ == '__main__':
 
     args = parse_args()
-    args.batch_size = 1
+    args.batch_size = 32
 
     if args.dataset == 'imagenet':
         img_size = 256
         channels = 3
-        near_ood = ['ssb-hard','ninco']
+        near_ood = ['ninco', 'ssb-hard']
         far_ood = ['inaturalist', 'dtd', 'openimageo']
         in_loader = pick_dataset(name = args.dataset, train=False, batch_size=args.batch_size, img_size=img_size, num_workers=args.num_workers, patches=args.patches)
         if os.path.exists(os.path.join(data_raw_dir, 'ImageNet-C')):
@@ -33,14 +33,14 @@ if __name__ == '__main__':
         print(f"Near OOD Detection for {args.dataset}\n")
         for ood in near_ood:
             out_loader = pick_dataset(name = ood, train=False, batch_size=args.batch_size, img_size=img_size, num_workers=args.num_workers, patches=args.patches)
-            auroc, fpr95, in_array, _ = model.outlier_detection(in_loader, out_loader, display=False, in_array=in_array)
+            auroc, fpr95, in_array, _ = model.outlier_detection(in_loader, out_loader, display=False, in_array=in_array, patches=args.patches)
             print(f"OOD: {ood}\nAUROC: {auroc:.4f}\nFPR95: {fpr95:.4f}\n\n")
 
     elif args.ood_task == 'far':
         print(f"Far OOD Detection for {args.dataset}\n")
         for ood in far_ood:
             out_loader = pick_dataset(name = ood, train=False, batch_size=args.batch_size, img_size=img_size, num_workers=args.num_workers, patches=args.patches)
-            auroc, fpr95, in_array, _ = model.outlier_detection(in_loader, out_loader, display=False, in_array=in_array)
+            auroc, fpr95, in_array, _ = model.outlier_detection(in_loader, out_loader, display=False, in_array=in_array, patches=args.patches)
             print(f"OOD: {ood}\nAUROC: {auroc:.4f}\nFPR95: {fpr95:.4f}\n\n")
 
     elif args.ood_task == 'covar':

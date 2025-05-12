@@ -460,7 +460,7 @@ class DisCoPatch(nn.Module):
 
         torch.save(self.discriminator.state_dict(), os.path.join(models_dir, 'DisCoPatch', f"Discriminator_{self.dataset}.pt"))
 
-    def outlier_detection(self, in_loader, out_loader, display = True, in_array = None):
+    def outlier_detection(self, in_loader, out_loader, display = True, in_array = None, patches = 1):
         '''
         Function to test the outlier detection capabilities of the model
         Args:
@@ -476,28 +476,56 @@ class DisCoPatch(nn.Module):
         '''
         in_scores = []
         out_scores = []
+        self.discriminator.eval()
 
+        # replace the batch norm layers with patch norm layers in the discriminator
+        for i, layer in enumerate(self.discriminator.encoder):
+            # iterate over the elements if the layer is a sequential layer
+            if isinstance(layer, nn.Sequential):
+                for j, element in enumerate(layer):
+                    # if the element is a batch norm layer, replace it with a patch norm layer
+                    if isinstance(element, nn.BatchNorm2d):
+                        # get the number of features of the batch norm layer, the gamma and beta parameters
+                        num_features = element.num_features
+                        eps = element.eps
+                        gamma = element.weight
+                        beta = element.bias
+                        # create a patch norm layer with the same parameters
+                        self.discriminator.encoder[i][j] = Patchnorm2D(num_features, patches, eps=eps, affine=True)
+                        # set the gamma and beta parameters of the patch norm layer to the same values as the batch norm layer
+                        self.discriminator.encoder[i][j].gamma = gamma
+                        self.discriminator.encoder[i][j].beta = beta
+                        
         if in_array is not None:
             in_scores = in_array
         else:
             for (imgs, _) in tqdm(in_loader, desc = 'In-distribution', leave=False):
-                score = self.discriminator(imgs.squeeze().to(self.device))
-                in_scores.append(score.detach().cpu().numpy().mean())
+                # reshape the images to have N*patches as the batch size
+                imgs = imgs.view(-1, imgs.size(2), imgs.size(3), imgs.size(4))
+                score = self.discriminator(imgs.to(self.device))
+                # group the scores by the number of patches and use the mean as the score per image
+                in_scores.append(score.detach().cpu().numpy().reshape(-1, patches).mean(axis=1))
+                #in_scores.append(score.detach().cpu().numpy())
 
-            in_scores = np.array(in_scores)
+            in_scores = np.concatenate(in_scores)
             in_scores = -in_scores + 1
 
         for (imgs, _) in tqdm(out_loader, desc = 'Out-of-distribution', leave=False):
-            out_scores.append(self.discriminator(imgs.squeeze().to(self.device)).detach().cpu().numpy().mean())
+            # reshape the images to have N*patches as the batch size
+            imgs = imgs.view(-1, imgs.size(2), imgs.size(3), imgs.size(4))
+            score = self.discriminator(imgs.to(self.device))
+            # group the scores by the number of patches and use the mean as the score per image
+            out_scores.append(score.detach().cpu().numpy().reshape(-1, patches).mean(axis=1))
+            #out_scores.append(score.detach().cpu().numpy())
 
-        out_scores = np.array(out_scores)
+        out_scores = np.concatenate(out_scores)
         out_scores = -out_scores + 1
-
+        
         rocauc = roc_auc_score(np.concatenate([np.zeros_like(in_scores), np.ones_like(out_scores)]), np.concatenate([in_scores, out_scores]))
 
         fpr, tpr , _ = roc_curve(np.concatenate([np.zeros_like(in_scores), np.ones_like(out_scores)]), np.concatenate([in_scores, out_scores]))
 
-        fpr95 = fpr[np.argmax(tpr >= 0.95)]
+        fpr95 = fpr[np.where(tpr >= 0.95)[0][0]]
 
         if display:
             # print discriminator metrics
@@ -510,6 +538,98 @@ class DisCoPatch(nn.Module):
         
         else:
             return rocauc, fpr95, in_scores, out_scores
+        
+class BatchFeatureReducer(nn.Module):
+    def __init__(self, reduction_factor):
+        """
+        Custom layer that reduces the batch size by averaging features of N consecutive elements.
+
+        Args:
+            reduction_factor (int): The number of consecutive batch elements to average.
+        """
+        super(BatchFeatureReducer, self).__init__()
+        assert reduction_factor > 0, "Reduction factor must be greater than 0."
+        self.reduction_factor = reduction_factor
+
+    def forward(self, x):
+        """
+        Forward pass for BatchFeatureReducer.
+
+        Args:
+            x (Tensor): Input tensor of shape (B, F), where B is the batch size and F is the feature dimension.
+
+        Returns:
+            Tensor: Reduced tensor of shape (B/N, F), where N is the reduction factor.
+        """
+        B, F = x.shape
+        assert B % self.reduction_factor == 0, "Batch size must be divisible by the reduction factor."
+        
+        # Reshape into groups of size N
+        x_grouped = x.view(-1, self.reduction_factor, F)  # Shape: (B/N, N, F)
+        
+        # Average across the group dimension
+        x_reduced = x_grouped.mean(dim=1)  # Shape: (B/N, F)
+        
+        return x_reduced
+        
+class Patchnorm2D(nn.Module):
+    def __init__(self, num_features, patches, eps=1e-5, momentum=0, affine=True):
+        """
+        Custom Group BatchNorm Layer.
+
+        Args:
+            num_features (int): Number of channels in the input.
+            patches (int): Number of images in each group for normalization.
+            eps (float): A small value added for numerical stability.
+            momentum (float): Value for running mean and variance updates.
+            affine (bool): If True, scale and shift parameters (gamma, beta) are learnable.
+        """
+        super(Patchnorm2D, self).__init__()
+        self.num_features = num_features
+        self.patches = patches
+        self.eps = eps
+        self.momentum = momentum
+        self.affine = affine
+
+        if self.affine:
+            self.gamma = nn.Parameter(torch.ones(num_features))
+            self.beta = nn.Parameter(torch.zeros(num_features))
+        else:
+            self.register_parameter('gamma', None)
+            self.register_parameter('beta', None)
+
+    def forward(self, x):
+        """
+        Forward pass for Patchnorm2D.
+
+        Args:
+            x (Tensor): Input tensor of shape (N, C, H, W).
+
+        Returns:
+            Tensor: Normalized tensor.
+        """
+        N, C, H, W = x.shape
+        assert N % self.patches == 0, "Batch size must be divisible by group size."
+        G = N // self.patches  # Number of groups
+
+        # Reshape to group dimension: (G, patches, C, H, W)
+        x_grouped = x.view(G, self.patches, C, H, W)
+
+        # Compute mean and variance for each group
+        mean = x_grouped.mean(dim=(1, 3, 4), keepdim=True)  # Mean over group size, H, W
+        var = x_grouped.var(dim=(1, 3, 4), keepdim=True, unbiased=False)  # Variance over group size, H, W
+
+        # Normalize using group stats
+        x_grouped = (x_grouped - mean) / torch.sqrt(var + self.eps)
+
+        # Reshape back to original dimensions
+        x_normalized = x_grouped.view(N, C, H, W)
+
+        # Apply affine transformation if enabled
+        if self.affine:
+            x_normalized = self.gamma[None, :, None, None] * x_normalized + self.beta[None, :, None, None]
+
+        return x_normalized
         
 
 class MSSIM(nn.Module):
