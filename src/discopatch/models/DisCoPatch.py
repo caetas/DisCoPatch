@@ -210,8 +210,8 @@ class Discriminator(nn.Module):
             modules.append(
                 nn.Sequential(
                     nn.Conv2d(input_channels, h_dim, kernel_size = 3, stride = 2, padding = 1),
-                    #nn.BatchNorm2d(h_dim, track_running_stats=False),
-                    nn.GroupNorm(32, h_dim),
+                    nn.BatchNorm2d(h_dim, track_running_stats=False),
+                    #nn.GroupNorm(32, h_dim),
                     #nn.InstanceNorm2d(h_dim),
                     nn.LeakyReLU()
                 )
