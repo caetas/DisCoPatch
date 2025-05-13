@@ -211,8 +211,8 @@ class Discriminator(nn.Module):
                 nn.Sequential(
                     nn.Conv2d(input_channels, h_dim, kernel_size = 3, stride = 2, padding = 1),
                     #nn.BatchNorm2d(h_dim, track_running_stats=False),
-                    #nn.GroupNorm(32, h_dim),
-                    nn.InstanceNorm2d(h_dim),
+                    nn.GroupNorm(32, h_dim),
+                    #nn.InstanceNorm2d(h_dim),
                     nn.LeakyReLU()
                 )
             )
@@ -457,7 +457,7 @@ class DisCoPatch(nn.Module):
             if (epoch+1) % self.sample_and_save_frequency == 0 or epoch == 0:
                 self.create_grid(title=f"Epoch {epoch}", train=True)
                 self.create_validation_grid(val_loader, title=f"Epoch {epoch}", train=True)
-                torch.save(self.discriminator.state_dict(), os.path.join(models_dir, 'DisCoPatch', f"Discriminator_{self.dataset}_{epoch}_instance.pt"))
+                torch.save(self.discriminator.state_dict(), os.path.join(models_dir, 'DisCoPatch', f"Discriminator_{self.dataset}_{epoch}_group.pt"))
         
             if acc_g_loss/patch_cnt < best_loss:
                 best_loss = acc_g_loss/patch_cnt
