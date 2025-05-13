@@ -210,8 +210,8 @@ class Discriminator(nn.Module):
             modules.append(
                 nn.Sequential(
                     nn.Conv2d(input_channels, h_dim, kernel_size = 3, stride = 2, padding = 1),
-                    nn.BatchNorm2d(h_dim, track_running_stats=False),
-                    #nn.GroupNorm(32, h_dim),
+                    #nn.BatchNorm2d(h_dim, track_running_stats=False),
+                    nn.GroupNorm(32, h_dim),
                     #nn.InstanceNorm2d(h_dim),
                     nn.LeakyReLU()
                 )
@@ -445,7 +445,7 @@ class DisCoPatch(nn.Module):
                 optimizer_D.step()
                 patch_cnt += imgs.size(0)
 
-                if self.dataset == 'imagenet' and patch_cnt>len(data_loader)*0.2*self.patches:
+                if self.dataset == 'imagenet' and patch_cnt>(len(data_loader)*self.patches//5):
                     break
 
             epochs_bar.set_description(f"Loss: {acc_g_loss/patch_cnt:.4f} - D Loss: {acc_d_loss/patch_cnt:.4f}")
@@ -509,7 +509,7 @@ class DisCoPatch(nn.Module):
                 # group the scores by the number of patches and use the mean as the score per image
                 in_scores.append(score.detach().cpu().numpy().reshape(-1, patches).mean(axis=1))
                 #in_scores.append(score.detach().cpu().numpy())
-                if len(in_scores) == 10:
+                if len(in_scores) == 20000:
                     break
 
             in_scores = np.concatenate(in_scores)
@@ -522,7 +522,7 @@ class DisCoPatch(nn.Module):
             # group the scores by the number of patches and use the mean as the score per image
             out_scores.append(score.detach().cpu().numpy().reshape(-1, patches).mean(axis=1))
             #out_scores.append(score.detach().cpu().numpy())
-            if len(out_scores) == 10:
+            if len(out_scores) == 20000:
                 break
 
         out_scores = np.concatenate(out_scores)
