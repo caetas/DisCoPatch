@@ -8,7 +8,7 @@ from config import data_raw_dir
 if __name__ == '__main__':
 
     args = parse_args()
-    args.batch_size = 32
+    args.batch_size = 8
 
     if args.dataset == 'imagenet':
         img_size = 256

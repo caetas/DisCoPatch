@@ -210,8 +210,8 @@ class Discriminator(nn.Module):
             modules.append(
                 nn.Sequential(
                     nn.Conv2d(input_channels, h_dim, kernel_size = 3, stride = 2, padding = 1),
-                    #nn.BatchNorm2d(h_dim, track_running_stats=False),
-                    nn.GroupNorm(32, h_dim),
+                    nn.BatchNorm2d(h_dim, track_running_stats=False),
+                    #nn.GroupNorm(32, h_dim),
                     #nn.InstanceNorm2d(h_dim),
                     nn.LeakyReLU()
                 )
@@ -455,7 +455,7 @@ class DisCoPatch(nn.Module):
             if (epoch+1) % self.sample_and_save_frequency == 0 or epoch == 0:
                 self.create_grid(title=f"Epoch {epoch}", train=True)
                 self.create_validation_grid(val_loader, title=f"Epoch {epoch}", train=True)
-                torch.save(self.discriminator.state_dict(), os.path.join(models_dir, 'DisCoPatch', f"Discriminator_{self.dataset}_{epoch}_group.pt"))
+                torch.save(self.discriminator.state_dict(), os.path.join(models_dir, 'DisCoPatch', f"Discriminator_{self.dataset}_{epoch}.pt"))
         
             if acc_g_loss/patch_cnt < best_loss:
                 best_loss = acc_g_loss/patch_cnt
@@ -509,6 +509,8 @@ class DisCoPatch(nn.Module):
                 # group the scores by the number of patches and use the mean as the score per image
                 in_scores.append(score.detach().cpu().numpy().reshape(-1, patches).mean(axis=1))
                 #in_scores.append(score.detach().cpu().numpy())
+                if len(in_scores) == 10:
+                    break
 
             in_scores = np.concatenate(in_scores)
             in_scores = -in_scores + 1
@@ -520,6 +522,8 @@ class DisCoPatch(nn.Module):
             # group the scores by the number of patches and use the mean as the score per image
             out_scores.append(score.detach().cpu().numpy().reshape(-1, patches).mean(axis=1))
             #out_scores.append(score.detach().cpu().numpy())
+            if len(out_scores) == 10:
+                break
 
         out_scores = np.concatenate(out_scores)
         out_scores = -out_scores + 1
