@@ -382,6 +382,7 @@ class DisCoPatch(nn.Module):
             acc_g_loss = 0.0
             acc_d_loss = 0.0
             patch_cnt = 0
+            cnt = 0
 
             for (imgs, _) in tqdm(data_loader, desc = 'Batches', leave=False):
 
@@ -444,8 +445,9 @@ class DisCoPatch(nn.Module):
                 d_loss.backward()
                 optimizer_D.step()
                 patch_cnt += imgs.size(0)
+                cnt += 1
 
-                if self.dataset == 'imagenet' and patch_cnt>(len(data_loader)*self.patches//5):
+                if self.dataset == 'imagenet' and cnt>(len(data_loader)//5):
                     break
 
             epochs_bar.set_description(f"Loss: {acc_g_loss/patch_cnt:.4f} - D Loss: {acc_d_loss/patch_cnt:.4f}")
