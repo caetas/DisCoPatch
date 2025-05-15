@@ -10,7 +10,7 @@
 # DisCoPatch
 
 <p align="center">
-  <img src="imgs/DisCoPatch.png" width="1000%" alt="Overview of DisCoNet's architecture." caption="Overview of DisCoPatch's architecture.">
+  <img src="imgs/DisCoPatch.png" width="1000%" alt="Overview of DisCoPatch's architecture." caption="Overview of DisCoPatch's architecture.">
 </p>
 
 The official implementation of DisCoPatch in PyTorch.
@@ -81,7 +81,7 @@ The evaluation of these models closely follows [OpenOOD's](https://github.com/ji
 
 ImageNet-1k is automatically downloaded from HuggingFace when you use the DataLoader.
 
-The remaining datasets can be downloaded using [`datasets_download.py`](src/disconet/datasets_download.py) by running the following commands:
+The remaining datasets can be downloaded using [`datasets_download.py`](src/discopatch/datasets_download.py) by running the following commands:
 
     cd src/discopatch
     python datasets_download.py [--imagenet]
