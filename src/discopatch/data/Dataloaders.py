@@ -34,7 +34,7 @@ class ImageNetPatchDataset(Dataset):
         patches = torch.stack(patches)
         return patches, self.dataset[idx]['label']
 
-def imagenetpatch_train_loader(batch_size, normalize = False, input_shape = None, num_workers = 0, patches = 16):
+def imagenetpatch_train_loader(batch_size, normalize = True, input_shape = None, num_workers = 0, patches = 16):
 
         if normalize:
             transform = transforms.Compose([
@@ -67,7 +67,7 @@ def imagenetpatch_train_loader(batch_size, normalize = False, input_shape = None
         return training_loader
         
         
-def imagenetpatch_val_loader(batch_size, normalize = False, input_shape = None, patches = 16, num_workers = 0):
+def imagenetpatch_val_loader(batch_size, normalize = True, input_shape = None, patches = 16, num_workers = 0):
 
         if normalize:
             transform = transforms.Compose([
