@@ -1,3 +1,7 @@
+[![PWC](https://img.shields.io/endpoint.svg?url=https://paperswithcode.com/badge/discopatch-batch-statistics-are-all-you-need/out-of-distribution-detection-on-imagenet-1k-14)](https://paperswithcode.com/sota/out-of-distribution-detection-on-imagenet-1k-14?p=discopatch-batch-statistics-are-all-you-need) 
+[![PWC](https://img.shields.io/endpoint.svg?url=https://paperswithcode.com/badge/discopatch-batch-statistics-are-all-you-need/out-of-distribution-detection-on-imagenet-1k-15)](https://paperswithcode.com/sota/out-of-distribution-detection-on-imagenet-1k-15?p=discopatch-batch-statistics-are-all-you-need)
+[![PWC](https://img.shields.io/endpoint.svg?url=https://paperswithcode.com/badge/discopatch-batch-statistics-are-all-you-need/out-of-distribution-detection-on-imagenet-1k-13)](https://paperswithcode.com/sota/out-of-distribution-detection-on-imagenet-1k-13?p=discopatch-batch-statistics-are-all-you-need)
+
 [![Python](https://img.shields.io/badge/python-3.11+-informational.svg)]()
 [![Code style: black](https://img.shields.io/badge/code%20style-black-000000.svg)](https://github.com/psf/black)
 [![Imports: isort](https://img.shields.io/badge/%20imports-isort-%231674b1?style=black)](https://pycqa.github.io/isort)
